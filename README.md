@@ -37,7 +37,7 @@ Email_Index.html
 
 3规范了代码结构和规范， 强制定义了页面的写法等。
 
-https://github.com/zhengguo07q/PhpMVCFramework/blob/master/docs/html%E9%A1%B5%E9%9D%A2%E9%A2%84%E8%A7%88.png
+![html页面预览](https://github.com/zhengguo07q/PhpMVCFramework/blob/master/docs/html%E9%A1%B5%E9%9D%A2%E9%A2%84%E8%A7%88.png)
 
 
 https://github.com/zhengguo07q/PhpMVCFramework/blob/master/docs/%E5%90%8E%E5%8F%B0.png
