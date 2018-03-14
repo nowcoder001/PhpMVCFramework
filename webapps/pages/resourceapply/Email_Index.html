@@ -1,0 +1,243 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<title><?echo L('resourceapply_email_index_10')?></title>
+	</head>
+	
+	<body>
+		<table id="email_datagrid"></table>
+		
+		<div id="email_footer" style="padding:5px 5px 15px;">
+			<a href="javascript:void(0)" class="easyui-linkbutton" iconCls="icon-reload" plain="true" onclick="javascript:$('#email_datagrid').datagrid({queryParams : queryParams()});"><?echo L('resourceapply_email_index_2')?></a> 
+		</div>
+		
+		<div id="email_toolbar" style="line-height: 35px;">
+			<form id='email_search_form' accept-charset="UTF-8" method="post">
+				<?echo L('resourceapply_email_index_4')?>:<input class="easyui-datetimebox" data-options="editable: false" id="email_search_form_start_date"/>
+	            
+				<?echo L('resourceapply_email_index_5')?>:<input class="easyui-datetimebox" data-options="editable: false" id="email_search_form_end_date"/>
+	            
+	 			<a href="javascript:void(0)" class="easyui-linkbutton" data-options="iconCls:'icon-search'" style="width: 80px;" onclick="javascript:emailIndexSearch();"><?echo L('resourceapply_email_index_6')?></a>
+	 			<a href="javascript:void(0)" class="easyui-linkbutton" data-options="iconCls:'icon-clear'" style="width: 80px;" onclick="javascript:clearFrom('email_search_form');"><?echo L('resourceapply_email_index_7')?></a>
+	        </form>
+	    </div>
+	    
+	    <div id="email_detail_dialog" title="<?echo L('resourceapply_email_index_47')?>" class="my_dialog" style="display: none; width: 700px;">
+	    	<table style="margin-top: 7px; margin-bottom: 7px;">
+	    	<!--  
+	    		<tr>
+	    			<td style="text-align: right; height: 30px;"><?echo L('resourceapply_email_index_10')?>ID:</td>
+	    			<td style="height: 30px;"><input id="email_detail_id" class="easyui-textbox" style="width: 187px;" readonly="readonly"/></td>
+	    			<td></td>
+	    			<td></td>
+	    		<tr>
+	    	-->
+	    		<tr>
+	    			<td style="text-align: right; height: 30px; width: 100px;"><?echo L('resourceapply_email_index_11')?>SDK:</td>
+	    			<td style="width: 200px;"><input id="email_detail_sdkid" readonly="readonly" class="easyui-textbox" style="width: 187px;"/></td>
+	    			<td style="text-align: right; height: 30px; width: 100px;"><?echo L('resourceapply_email_index_12')?>:</td>
+	    			<td style="width: 180px;"><input id="email_detail_server_id" readonly="readonly" class="easyui-textbox" style="width: 187px;"/></td>
+	    		<tr>
+	    		<tr>
+	    			<td style="text-align: right; height: 30px;"><?echo L('resourceapply_email_index_40')?>:</td>
+	    			<td style="height: 30px;" colspan="3">
+	    				<input style="width: 530px;" class="easyui-validatebox easyui-textbox" readonly="readonly" id="email_detail_title"/>
+	    			</td>
+	    		<tr>
+	    		<tr>
+	    			<td style="text-align: right; height: 30px;"><?echo L('resourceapply_email_index_41')?>:</td>
+	    			<td style="height: 30px;"><input id="email_detail_type" readonly="readonly" class="easyui-textbox" style="width: 187px;"/></td>
+	    			<td style="text-align: center"></td>
+	    			<td><span id=""></span></td>
+	    		<tr>
+	    		<tr>
+	    			<td style="text-align: right; height: 30px;"><?echo L('resourceapply_email_index_15')?>:</td>
+	    			<td colspan="3">
+	    				<textarea rows="5" cols="60" readonly="readonly" style="background-color: #E4E4E4;" id="email_detail_receiverIds"></textarea>
+	    			</td>
+	    		<tr>
+	    		<tr>
+	    			<td style="text-align: right; height: 50px;"><?echo L('resourceapply_email_index_16')?>:</td>
+	    			<td style="height: 50px;" colspan="3">
+	    				<textarea rows="5" cols="60" readonly="readonly" style="background-color: #E4E4E4;" id="email_detail_content"></textarea>
+	    			</td>
+	    		<tr>
+	    		<tr>
+	    			<td style="text-align: right; height: 30px;"><?echo L('resourceapply_email_index_17')?>:</td>
+	    			<td colspan="3">
+	    				<textarea rows="5" cols="60" readonly="readonly" style="background-color: #E4E4E4;" id="email_detail_rewards_desc"></textarea>
+	    			</td>
+	    		<tr>
+	    		<tr>
+	    			<td style="text-align: right; height: 30px;"><?echo L('resourceapply_email_index_18')?>:</td>
+	    			<td><input id="email_detail_create_time" readonly="readonly" class="easyui-textbox" style="width: 187px;"/></td>
+	    			<td style="text-align: right"><?echo L('resourceapply_email_index_19')?>:</td>
+	    			<td><input id="email_detail_overdue_time" readonly="readonly" class="easyui-textbox" style="width: 187px;"/></td>
+	    		<tr>
+	    	</table>
+		</div>
+		
+		<script type="text/javascript">
+			function emailIndexSearch ()
+			{
+				var condition = queryParams();
+
+				var start_date = $('#email_search_form_start_date').datetimebox('getValue');
+				if(start_date != null && start_date != '')
+					condition.startDate = getUnixTime(start_date);
+
+				var end_date = $('#email_search_form_end_date').datetimebox('getValue');
+				if(end_date != null && end_date != '')
+					condition.endDate = getUnixTime(end_date);
+				
+				$('#email_datagrid').datagrid('load', condition);
+			}
+	      	function emailDetail (index)
+	      	{
+	      		var row = $('#email_datagrid').datagrid('getRows')[parseInt(index)];
+				if(row)	{
+					$.ajax({url : "/?action=admin.Admin!getSdk",
+						data : {sdkid : row.sdkid},
+						async : true, type : "post", dataType : "json",
+						success : function(result) {
+							if(result != "1")
+								$('#email_detail_sdkid').textbox('setValue', result.name);	
+					    },
+						error : function () {
+							messager('<?echo L('resourceapply_email_index_26')?>', '<?echo L('resourceapply_email_index_24')?> SDK <?echo L('resourceapply_email_index_28')?>.', 'icon-exclamation');
+						}
+					});
+
+					$.ajax({url : "/?action=admin.Admin!getServer",
+						data : {gid : row.gid, sdkid : row.sdkid, serverid : row.server_id},
+						async : true, type : "post", dataType : "json",
+						success : function(result) {
+							if(result != "1")
+								$('#email_detail_server_id').textbox('setValue', result.name);	
+					    },
+						error : function () {
+							messager('<?echo L('resourceapply_email_index_26')?>', '<?echo L('resourceapply_email_index_24')?> Server <?echo L('resourceapply_email_index_28')?>.', 'icon-exclamation');
+						}
+					});
+					
+					$('#email_detail_id').textbox('setValue', row.id);
+					$('#email_detail_type').textbox('setValue', common_apply_record(row.type));
+					$('#email_detail_receiverIds').val(row.receiverIds);
+					$('#email_detail_title').textbox('setValue', row.title);
+					$('#email_detail_content').val(row.content);
+					$('#email_detail_rewards_desc').val(row.rewards_desc);
+					$('#email_detail_create_time').textbox('setValue', timeToStr(row.create_time));
+					$('#email_detail_overdue_time').textbox('setValue', timeToStr(row.overdue_time));
+					
+					$('#email_detail_dialog').show().dialog({
+						modal : true,
+						closable : true,
+						iconCls : 'icon-ok',
+						buttons : [ {
+							text : '<?echo L('resourceapply_email_index_34')?>',
+							iconCls : 'icon-clear',
+							handler : function() {
+								$('#email_detail_dialog').dialog('close');
+							}
+						} ]
+					});
+				}
+				else
+				{
+					messager('<?echo L('resourceapply_email_index_35')?>', '<?echo L('resourceapply_email_index_36')?>.', 'icon-exclamation');
+				}
+	      	}
+	      	
+			$(function(){
+				$('#email_datagrid').datagrid({
+					url : '/?action=resourceapply.Email!getList',
+					queryParams : queryParams(),
+					fit : true,
+					border : false,		
+					striped : true,
+					rownumbers : true,
+					pagination : true,
+					singleSelect : true,
+					collapsible:true,
+					idField : 'id',
+					sortName : 'id',
+					sortOrder : 'desc',
+					pageSize : default_page_size,
+					pageList : default_page_list,
+					columns : [ [ {
+						width : '5%',
+						title : '<?echo L('resourceapply_email_index_38')?>ID',
+						field : 'id',
+						align : 'center',
+						checkbox : true,
+						sortable : false
+					}, {
+						width : '8%',
+						title : '<?echo L('resourceapply_email_index_39')?>',
+						field : 'username',
+						align : 'center',
+						sortable : false
+					}, {
+						width : '8%',
+						title : '<?echo L('resourceapply_email_index_40')?>',
+						field : 'title',
+						align : 'left',
+						sortable : false
+					}, {
+						width : '8%',
+						title : '<?echo L('resourceapply_email_index_41')?>',
+						field : 'type',
+						align : 'center',
+						sortable : true,
+						formatter : dict.Lgenerator('apply_record')
+					}, {
+						width : '15%',
+						title : '<?echo L('resourceapply_email_index_42')?>',
+						field : 'receiverIds',
+						align : 'left',
+						sortable : false,
+						formatter : function(value, row) {
+						    return value;
+						}
+					}, {
+						width : '10%',
+						title : '<?echo L('resourceapply_email_index_43')?>',
+						field : 'create_time',
+						align : 'center',
+						sortable : true,
+						formatter : function(value, row) {
+							return timeToStr(value);
+						}
+					}, {
+						width : '20%',
+						title : '<?echo L('resourceapply_email_index_16')?>',
+						field : 'content',
+						align : 'left',
+						sortable : false
+					}, {
+						width : '23%',
+						title : '<?echo L('resourceapply_email_index_45')?>',
+						field : 'rewards_desc',
+						align : 'left',
+						sortable : false
+					}, {
+						title : '<?echo L('resourceapply_email_index_46')?>',
+						field : 'operation',
+						width : '5%',
+						align : 'center',
+						formatter : function(value, row, index) {
+							return '<a href="javascript:void(0)" onclick="javascript:emailDetail(\'' + index +'\');"><?echo L('resourceapply_email_index_47')?></a>';
+						}
+					} ] ],
+					toolbar : '#email_toolbar',
+					footer : '#email_footer',
+					loadMsg : '<?echo L('resourceapply_email_index_48')?>...',
+					onLoadError : function (data) {
+						onLoadError();
+					}
+				});
+			});
+			
+		</script>
+	</body>
+</html>
