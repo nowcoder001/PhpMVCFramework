@@ -42,4 +42,4 @@ Email_Index.html
 
 ![后台](https://github.com/zhengguo07q/PhpMVCFramework/blob/master/docs/%E5%90%8E%E5%8F%B0.png)
 
-![目录结构预览](https://github.com/zhengguo07q/PhpMVCFramework/blob/master/docs/%E7%9B%AE%E5%BD%95%E7%BB%93%E6%9E%84%E9%A2%84%E8%A7%88.png)
+![目录结构预览](https://github.com/zhengguo07q/PhpMVCFramework/blob/master/docs/PHP%E9%80%BB%E8%BE%91%E6%96%87%E4%BB%B6.png)
